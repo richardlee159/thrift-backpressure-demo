@@ -1,0 +1,45 @@
+version: "3.3"
+services:
+  compose-post-service:
+    image: richardlee159/sn-3tiers:latest
+    hostname: compose-post-service
+    restart: always
+    entrypoint: ComposePostService
+    volumes:
+      - ./config:/social-network-microservices/config
+
+  text-service:
+    image: richardlee159/sn-3tiers:latest
+    hostname: text-service
+    restart: always
+    entrypoint: TextService
+    volumes:
+      - ./config:/social-network-microservices/config
+
+  nginx-thrift:
+    image: yg397/openresty-thrift:xenial
+    hostname: nginx-thrift
+    ports:
+      - 8080:8080
+    restart: always
+    volumes:
+      - ./nginx-web-server/lua-scripts:/usr/local/openresty/nginx/lua-scripts
+      - ./nginx-web-server/conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - ./gen-lua:/gen-lua
+      - ./docker/openresty-thrift/lua-thrift:/usr/local/openresty/lualib/thrift
+
+  rload:
+    image: richardlee159/rload:latest
+    hostname: rload
+    restart: always
+    command: rload -d 600 -r 400 -s /mnt/compose-post.lua http://nginx-thrift:8080
+    volumes:
+      - ./scripts/compose-post.lua:/mnt/compose-post.lua
+
+  # locust:
+  #   image: locustio/locust:latest
+  #   hostname: locust
+  #   restart: always
+  #   command: -f /mnt/locustfile.py --headless --host http://nginx-thrift:8080 --users 4000 --spawn-rate 1000
+  #   volumes:
+  #     - ./scripts/locustfile.py:/mnt/locustfile.py

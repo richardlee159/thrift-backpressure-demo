@@ -1,0 +1,6 @@
+*
+!/src/
+!/CMakeLists.txt
+!/cmake/
+!/gen-cpp/
+!/wrk2/

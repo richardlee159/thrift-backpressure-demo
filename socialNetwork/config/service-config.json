@@ -1,0 +1,16 @@
+{
+  "text-service": {
+    "keepalive_ms": 10000,
+    "addr": "text-service",
+    "timeout_ms": 10000,
+    "port": 9090,
+    "connections": 512
+  },
+  "compose-post-service": {
+    "keepalive_ms": 10000,
+    "addr": "compose-post-service",
+    "timeout_ms": 10000,
+    "port": 9090,
+    "connections": 512
+  }
+}
